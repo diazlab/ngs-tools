@@ -31,16 +31,16 @@ def split_genomic_fasta_to_cdna(
                               disable=not show_progress):
             # Find all gene and transcripts in this chromosome
             _gene_infos = {}
-            _tx_infos = {}
+            _transcript_infos = {}
             for gene_id, gene_attributes in gene_infos.items():
                 if gene_attributes['chromosome'] == entry.name:
                     _gene_infos[gene_id] = gene_attributes
-                    _tx_infos.update({
+                    all_transcripts = gene_attributes['transcripts']
+                    all_transcripts.sort()
+                    _transcript_infos.update({
                         transcript_id: transcript_infos[transcript_id]
-                        for transcript_id in gene_attributes['transcripts']
+                        for transcript_id in all_transcripts
                     })
-
-            _transcript_infos = {k: _tx_infos[k] for k in sorted(_tx_infos)}
 
             # Write all transcripts as separate FASTA entries.
             for transcript_id, transcript_attributes in _transcript_infos.items(
@@ -105,16 +105,16 @@ def split_genomic_fasta_to_intron(
                               disable=not show_progress):
             # Find all gene and transcripts in this chromosome
             _gene_infos = {}
-            _tx_infos = {}
+            _transcript_infos = {}
             for gene_id, gene_attributes in gene_infos.items():
                 if gene_attributes['chromosome'] == entry.name:
                     _gene_infos[gene_id] = gene_attributes
-                    _tx_infos.update({
+                    all_transcripts = gene_attributes['transcripts']
+                    all_transcripts.sort()
+                    _transcript_infos.update({
                         transcript_id: transcript_infos[transcript_id]
-                        for transcript_id in gene_attributes['transcripts']
+                        for transcript_id in all_transcripts
                     })
-
-            _transcript_infos = {k: _tx_infos[k] for k in sorted(_tx_infos)}
 
             # Write all transcripts as separate FASTA entries.
             for transcript_id, transcript_attributes in _transcript_infos.items(
