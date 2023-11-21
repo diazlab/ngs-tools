@@ -26,19 +26,22 @@ def split_genomic_fasta_to_cdna(
     Returns:
         Path to written FASTA
     """
+    gene_infos_sorted = {k: gene_infos[k] for k in sorted(gene_infos)}
     with Fasta(fasta_path, 'r') as f_in, Fasta(out_path, 'w') as f_out:
         for entry in progress(f_in, desc='Splitting cDNA',
                               disable=not show_progress):
             # Find all gene and transcripts in this chromosome
             _gene_infos = {}
-            _transcript_infos = {}
-            for gene_id, gene_attributes in gene_infos.items():
+            _tx_infos = {}
+            for gene_id, gene_attributes in gene_infos_sorted.items():
                 if gene_attributes['chromosome'] == entry.name:
                     _gene_infos[gene_id] = gene_attributes
-                    _transcript_infos.update({
+                    _tx_infos.update({
                         transcript_id: transcript_infos[transcript_id]
                         for transcript_id in gene_attributes['transcripts']
                     })
+
+            _transcript_infos = {k: _tx_infos[k] for k in sorted(_tx_infos)}
 
             # Write all transcripts as separate FASTA entries.
             for transcript_id, transcript_attributes in _transcript_infos.items(
@@ -98,19 +101,22 @@ def split_genomic_fasta_to_intron(
     Returns:
         Path to written FASTA
     """
+    gene_infos_sorted = {k: gene_infos[k] for k in sorted(gene_infos)}
     with Fasta(fasta_path, 'r') as f_in, Fasta(out_path, 'w') as f_out:
         for entry in progress(f_in, desc='Splitting introns',
                               disable=not show_progress):
             # Find all gene and transcripts in this chromosome
             _gene_infos = {}
-            _transcript_infos = {}
-            for gene_id, gene_attributes in gene_infos.items():
+            _tx_infos = {}
+            for gene_id, gene_attributes in gene_infos_sorted.items():
                 if gene_attributes['chromosome'] == entry.name:
                     _gene_infos[gene_id] = gene_attributes
-                    _transcript_infos.update({
+                    _tx_infos.update({
                         transcript_id: transcript_infos[transcript_id]
                         for transcript_id in gene_attributes['transcripts']
                     })
+
+            _transcript_infos = {k: _tx_infos[k] for k in sorted(_tx_infos)}
 
             # Write all transcripts as separate FASTA entries.
             for transcript_id, transcript_attributes in _transcript_infos.items(
@@ -169,12 +175,13 @@ def split_genomic_fasta_to_nascent(
     Returns:
         Path to written FASTA
     """
+    gene_infos_sorted = {k: gene_infos[k] for k in sorted(gene_infos)}
     with Fasta(fasta_path, 'r') as f_in, Fasta(out_path, 'w') as f_out:
         for entry in progress(f_in, desc='Splitting nascent',
                               disable=not show_progress):
             # Find all genes in this chromosome
             _gene_infos = {}
-            for gene_id, gene_attributes in gene_infos.items():
+            for gene_id, gene_attributes in gene_infos_sorted.items():
                 if gene_attributes['chromosome'] == entry.name:
                     _gene_infos[gene_id] = gene_attributes
                     gene_name = gene_attributes.get('gene_name')
